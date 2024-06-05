@@ -5,7 +5,7 @@ import com.codewithus.planningservice.Model.Planning;
 
 public class PlanningMapper {
 
-    public static Planning mapToevent (PlanningDto planningDto) {
+    public static Planning mapToPlanning(PlanningDto planningDto) {
         return new Planning(
                 planningDto.getId(),
                 planningDto.getUserId(),

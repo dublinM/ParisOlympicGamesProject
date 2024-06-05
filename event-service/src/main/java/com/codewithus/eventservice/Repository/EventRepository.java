@@ -2,6 +2,7 @@ package com.codewithus.eventservice.Repository;
 
 import com.codewithus.eventservice.Model.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 import java.util.List;
@@ -16,5 +17,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findBySiteId(Long siteId);
 
+    @Query("SELECT e FROM Event e WHERE FUNCTION('date', e.date) = :date")
     List<Event> findByDate(Date date);
 }

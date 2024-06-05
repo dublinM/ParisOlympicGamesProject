@@ -2,17 +2,20 @@ package com.codewithus.eventservice.Service;
 
 
 import com.codewithus.eventservice.Dto.EventDto;
+import reactor.core.publisher.Mono;
 
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public interface EventService {
-    EventDto createEvent(EventDto eventDto);
+    Mono<EventDto> createEvent(EventDto eventDto);
 
     List<EventDto> createEvents(List<EventDto> eventDtos);
 
-    EventDto getEventById(Long id);
+    Optional<Map<String, Object>> getEventById(Long id);
 
     EventDto getEventByName(String name);
 
@@ -31,5 +34,5 @@ public interface EventService {
 
     List<EventDto> getEventsBySiteId(Long siteId);
 
-    List<EventDto> getEventsByDate(Date date);
+    List<Map<String, Object>> getEventsByDate(Date date);
 }

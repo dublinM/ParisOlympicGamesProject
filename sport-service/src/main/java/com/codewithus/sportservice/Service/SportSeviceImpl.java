@@ -2,6 +2,7 @@ package com.codewithus.sportservice.Service;
 
 import com.codewithus.sportservice.Dto.SportRequest;
 import com.codewithus.sportservice.Dto.SportResponse;
+import com.codewithus.sportservice.Exception.ResourceNotFoundException;
 import com.codewithus.sportservice.Model.Sport;
 import com.codewithus.sportservice.Repository.SportRepository;
 import lombok.RequiredArgsConstructor;
@@ -125,7 +126,7 @@ public class SportSeviceImpl implements SportService{
 
     public SportResponse getSportById(String id) {
         Sport sport = sportRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Sport not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Sport not found with id: " + id));
         return mapToSportResponse(sport);
     }
 

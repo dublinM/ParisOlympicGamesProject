@@ -7,10 +7,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,9 +23,10 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping
-    public ResponseEntity<EventDto> createEvent(@RequestBody EventDto eventDto) {
-        EventDto savedEvent = eventService.createEvent(eventDto);
-        return new ResponseEntity<>(savedEvent, HttpStatus.CREATED);
+    public Mono<ResponseEntity<EventDto>> createEvent(@RequestBody EventDto eventDto) {
+        return eventService.createEvent(eventDto)
+                .map(savedEvent -> ResponseEntity.status(HttpStatus.CREATED).body(savedEvent))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/bulk")
@@ -32,9 +36,11 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
-        EventDto eventDto = eventService.getEventById(id);
-        return ResponseEntity.ok(eventDto);
+    public ResponseEntity<?> getEventById(@PathVariable Long id) {
+        Optional<Map<String, Object>> eventDetails = eventService.getEventById(id);
+        return eventDetails
+                .map(details -> ResponseEntity.ok(details))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/name")
@@ -50,8 +56,9 @@ public class EventController {
     }
 
     @GetMapping("/date")
-    public ResponseEntity<List<EventDto>> getEventsByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date) {
-        return ResponseEntity.ok(eventService.getEventsByDate(date));
+    public ResponseEntity<List<Map<String, Object>>> getEventsByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date) {
+        List<Map<String, Object>> detailedEvents = eventService.getEventsByDate(date);
+        return ResponseEntity.ok(detailedEvents);
     }
 
     @GetMapping("/description")
@@ -60,6 +67,8 @@ public class EventController {
         return ResponseEntity.ok(eventDto);
     }
 
+
+    @GetMapping("/sportId")
     public ResponseEntity<List<EventDto>> getEventsBySportId(@RequestParam String sportId) {
         return ResponseEntity.ok(eventService.getEventsBySportId(sportId));
     }

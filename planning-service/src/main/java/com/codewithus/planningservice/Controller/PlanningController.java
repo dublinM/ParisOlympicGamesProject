@@ -5,7 +5,10 @@ import com.codewithus.planningservice.Service.PlanningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/planning")
@@ -33,8 +36,8 @@ public class PlanningController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlanningDto> updatePlanning(@PathVariable Long id, @RequestBody PlanningDto planningDto) {
-        PlanningDto updatedPlanning = planningService.updatePlanning(id, planningDto);
+    public ResponseEntity<Mono<PlanningDto>> updatePlanning(@PathVariable Long id, @RequestBody PlanningDto planningDto) {
+        Mono<PlanningDto> updatedPlanning = planningService.updatePlanning(id, planningDto);
         return ResponseEntity.ok(updatedPlanning);
     }
 
@@ -51,8 +54,9 @@ public class PlanningController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PlanningDto>> getPlanningsByUserId(@PathVariable String userId) {
-        List<PlanningDto> plannings = planningService.getPlanningsByUserId(userId);
+    public ResponseEntity<List<Map<String, Object>>> getPlanningsByUserId(@PathVariable String userId) {
+        List<Map<String, Object>> plannings = planningService.getPlanningsByUserId(userId);
         return ResponseEntity.ok(plannings);
     }
+
 }
